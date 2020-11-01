@@ -1,0 +1,7 @@
+Title	ひぐらしのなく頃に　鬼隠し編
+Title file as	ヒグラシノナクコロニ　オニカクシヘン
+Author	竜騎士07
+Author file as	リュウキシゼロナナ
+Modified	2020-10-28T00:00:00Z
+Unique ID	flow-MD5:813d192b1df09d39e35ecc09a83590d3
+Ebook filename	Higurashi_01_Onikakushi.epub
