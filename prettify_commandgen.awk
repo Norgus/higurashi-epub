@@ -5,22 +5,8 @@
 # pass flow.txt and metadata.txt as arguments:
 # awk -f prettify_commandgen.awk flow.txt metadata.txt
 BEGIN {
-	runfile = "prettify_run.sh"
-	print "unzip book-template.zip" > runfile
-	ORS = " "
-	print "awk -f prettify.awk " > runfile
-}
-
-BEGINFILE{
-	if (tolower(FILENAME) ~ /metadata/){
-		FS = "\t"
-	} else {
-		FS = "\""
-	}
-}
-
-{
-	if (tolower(FILENAME) ~ /metadata/){
+	FS = "\t"
+	while (getline < "metadata.txt"){
 		if ($1 == "Title"){title = $2}
 		if ($1 == "Title file as"){titlefa = $2}
 		if ($1 == "Author"){author = $2}
@@ -28,7 +14,13 @@ BEGINFILE{
 		if ($1 == "Modified"){modified = $2}
 		if ($1 == "Unique ID"){uniqueid = $2}
 		if ($1 == "Ebook filename"){ebookname = $2}
+		if ($1 == "Censorship level"){censor_level = $2}
 	}
+	runfile = "prettify_run.sh"
+	print "unzip book-template.zip" > runfile
+	ORS = " "
+	print "awk -f prettify.awk censor_level=" censor_level " " > runfile
+	FS = "\""
 }
 
 /CallScript/{

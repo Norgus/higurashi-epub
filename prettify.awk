@@ -62,9 +62,26 @@ BEGINFILE {
 	printf "<p>" ln "</p>" > outputtxt
 }
 
+# potential location to insert new lines
 #/OutputLineAll/{
 #	print "\n<br/>\n" > outputtxt
 #}
+
+# retrieve content loaded from external scripts in 07th-mod modded version of higurashi
+/ModCallScriptSection/ {
+	gtet = strtonum(substr($1, match($1, "[0-9]"), 1))
+	if (censor_level >= gtet) {
+		ext_filename = $2
+		ext_subname = $4
+	}
+	getline
+	ltet = strtonum(substr($1, match($1, "[0-9]"), 1))
+	if (censor_level <= ltet) {
+		ext_filename = $2
+		ext_subname = $4
+	}
+	print "mod ext file and sub name: " ext_filename ext_subname  
+}
 
 /TIPS_NEW/{
 	print "<p>Tip <a class=\"noteref\" epub:type=\"noteref\" id=\"tip_body-" ++tipno_body "\" href=\"" tipsxhtmlfile "#tip" tipno_body "\">" tipno_body "</a></p>" > outputtxt
