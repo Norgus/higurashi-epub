@@ -37,6 +37,14 @@ README_prettify.txt	this file
 
 Changelog
 ===
+
+Version 0.9
+--
+Added "Censorship level" variable to metadata.txt and finally got correct parsing and loading of external
+txt files.
+Currently bodges loading tips files with vague filename pattern, which leads to all of the censorship text
+ending up appended to the end of the footnotes where it is not very welcome.
+
 Version 0.7
 --
 Character names nicely formatted.
