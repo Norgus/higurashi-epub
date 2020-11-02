@@ -100,6 +100,7 @@ BEGINFILE {
 
 # retrieve content loaded from external scripts in 07th-mod modded version of higurashi
 /ModCallScriptSection/ {
+	if($2 ~ /&/){next} # filter out filenames containing &.. because that's a fucking thing
 	gtet = strtonum(substr($1, match($1, "[0-9]"), 1))
 	if (censor_level >= gtet) {
 		ext_filename = $2 ".txt"

@@ -2,8 +2,8 @@
 # 
 # Retrieves script names from flow.txt to compile the runfile
 #
-# pass flow.txt and metadata.txt as arguments:
-# awk -f prettify_commandgen.awk flow.txt metadata.txt
+# pass flow.txt as argument:
+# awk -f prettify_commandgen.awk flow.txt
 BEGIN {
 	FS = "\t"
 	while (getline < "metadata.txt"){
