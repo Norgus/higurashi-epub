@@ -4,6 +4,46 @@ function htmlsanitise(a){
 	return result
 }
 
+function get_text(line){
+	split(line,linearr,"\"")
+	ln = linearr[2]
+	if (ln ~ /[<>]/){
+		ln = htmlsanitise(ln)
+	}
+	if (ln ~ /[（）]/){
+		ln = gensub(/([亜-熙纊-黑]{1,4})（([ぁ-ゔァ-ヺ]+)）/, "<ruby>\\1<rt>\\2</rt></ruby>", "g", ln)
+	}
+	printf "<p>" ln "</p>" > outputtxt
+}
+
+function get_charname(line){
+	split(line, chararr, ">|<")
+	sub("=", ":", chararr[2])
+	print "<p style=\"font-weight: bold;\"> <span style=\"" chararr[2] "; \"> &#9830; </span>" chararr[3] "</p>" > outputtxt
+}
+
+function get_external_text(ext_filename, ext_subname){
+	do {
+		morelines = getline < ext_filename
+		if ($0 ~ ext_subname){break}
+	} while (morelines)
+	do {
+		morelines = getline < ext_filename
+		if ($0 ~ /ClearMessage/){
+			print "\n<p><br/></p>\n" > outputtxt
+			print "line!!"
+		}
+		if ($0 ~ /GADVMode.*OutputLine\>/){
+			get_charname($0)
+			print "character name!"
+		}
+		if ($0 ~ /OutputLine\(NULL/){
+			get_text($0)
+			print "text line!"
+		}
+		if ($0 ~ /^void dialog/){break}
+	} while (morelines)
+}	
 BEGIN {
 	FS = "\""
 	maintxtfile = "p-001.txt"
@@ -46,20 +86,11 @@ BEGINFILE {
 
 # Include the name of the character who is speaking (when available in modded script)
 /GADVMode.*OutputLine\>/{
-	split($0, chararr, ">|<")
-	sub("=", ":", chararr[2])
-	print "<p style=\"font-weight: bold;\"> <span style=\"" chararr[2] "; \"> &#9830; </span>" chararr[3] "</p>" > outputtxt
+	get_charname($0)
 }
 
 /OutputLine\(NULL/{
-	ln = $2
-	if (ln ~ /[<>]/){
-		ln = htmlsanitise(ln)
-	}
-	if (ln ~ /[（）]/){
-		ln = gensub(/([亜-熙纊-黑]{1,4})（([ぁ-ゔァ-ヺ]+)）/, "<ruby>\\1<rt>\\2</rt></ruby>", "g", ln)
-	}
-	printf "<p>" ln "</p>" > outputtxt
+	get_text($0)
 }
 
 # potential location to insert new lines
@@ -71,16 +102,17 @@ BEGINFILE {
 /ModCallScriptSection/ {
 	gtet = strtonum(substr($1, match($1, "[0-9]"), 1))
 	if (censor_level >= gtet) {
-		ext_filename = $2
+		ext_filename = $2 ".txt"
 		ext_subname = $4
 	}
 	getline
 	ltet = strtonum(substr($1, match($1, "[0-9]"), 1))
 	if (censor_level <= ltet) {
-		ext_filename = $2
+		ext_filename = $2 ".txt"
 		ext_subname = $4
 	}
-	print "mod ext file and sub name: " ext_filename ext_subname  
+	print "mod ext file and sub name: " ext_filename " - " ext_subname  
+	get_external_text(ext_filename, ext_subname) 
 }
 
 /TIPS_NEW/{

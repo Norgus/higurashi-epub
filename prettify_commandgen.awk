@@ -23,7 +23,7 @@ BEGIN {
 	FS = "\""
 }
 
-/CallScript/{
+/\<CallScript\>/{
 	print $2 ".txt" > runfile
 }
 
