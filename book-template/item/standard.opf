@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package
+ xmlns="http://www.idpf.org/2007/opf"
+ version="3.0"
+ xml:lang="ja"
+ unique-identifier="unique-id"
+ prefix="ebpaj: http://www.ebpaj.jp/"
+>
+
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+<!-- 作品名 -->
+<dc:title id="title">TITLE HERE</dc:title>
+<meta refines="#title" property="file-as">TITLE FILEAS HERE</meta>
+
+<!-- 著者名 -->
+<dc:creator id="creator01">AUTHOR HERE</dc:creator>
+<meta refines="#creator01" property="role" scheme="marc:relators">aut</meta>
+<meta refines="#creator01" property="file-as">AUTHOR FILEAS HERE</meta>
+<meta refines="#creator01" property="display-seq">1</meta>
+
+<!-- 言語 -->
+<dc:language>ja</dc:language>
+
+<!-- ファイルid -->
+<dc:identifier id="unique-id">UNIQUE ID HERE</dc:identifier>
+
+<!-- 更新日 -->
+<meta property="dcterms:modified">MODIFIED HERE</meta>
+
+</metadata>
+
+<manifest>
+
+<!-- navigation -->
+<item media-type="application/xhtml+xml" id="toc" href="navigation-documents.xhtml" properties="nav"/>
+
+<!-- style -->
+<item media-type="text/css" id="book-style"     href="style/book-style.css"/>
+<item media-type="text/css" id="style-reset"    href="style/style-reset.css"/>
+<item media-type="text/css" id="style-standard" href="style/style-standard.css"/>
+<item media-type="text/css" id="style-advance"  href="style/style-advance.css"/>
+<item media-type="text/css" id="style-check"    href="style/style-check.css"/>
+
+<!-- xhtml -->
+<item media-type="application/xhtml+xml" id="p-titlepage"   href="xhtml/p-titlepage.xhtml"/>
+<item media-type="application/xhtml+xml" id="p-toc"         href="xhtml/p-toc.xhtml"/>
+<item media-type="application/xhtml+xml" id="p-001"         href="xhtml/p-001.xhtml"/>
+<item media-type="application/xhtml+xml" id="tips"         href="xhtml/tips.xhtml"/>
+
+</manifest>
+
+<spine page-progression-direction="rtl">
+
+<itemref linear="yes" idref="p-titlepage"   properties="page-spread-left"/>
+<itemref linear="yes" idref="p-toc"         properties="page-spread-left"/>
+<itemref linear="yes" idref="p-001"         properties="page-spread-left"/>
+<itemref linear="yes" idref="tips"         properties="page-spread-left"/>
+
+</spine>
+
+</package>

@@ -17,7 +17,6 @@ BEGIN {
 		if ($1 == "Censorship level"){censor_level = $2}
 	}
 	runfile = "prettify_run.sh"
-	print "unzip book-template.zip" > runfile
 	ORS = " "
 	print "awk -f prettify.awk censor_level=" censor_level " " > runfile
 	FS = "\""
@@ -46,5 +45,6 @@ END {
 	print  "sed -i -e '/INSERT HERE/r book-template/item/xhtml/tips.txt' -e '/INSERT HERE/d' book-template/item/xhtml/tips.xhtml" > runfile
 	print "rm book-template/item/xhtml/tips.txt" > runfile
 	print "cd book-template\nzip -X0 ../" ebookname " mimetype\nzip -Xr ../" ebookname " *" > runfile
+	print "cd ..\nrm book-template -rf" > runfile
 	system("chmod +x " runfile)
 }

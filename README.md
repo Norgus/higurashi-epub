@@ -12,7 +12,6 @@ Requirements
 ===
 cygwin (or general linux shell environment? untested)
 	zip
-	unzip
 	awk
 	sed
 
