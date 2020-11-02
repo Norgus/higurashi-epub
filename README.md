@@ -34,33 +34,8 @@ prettify_commandgen.awk	prepares a script which runs everything else
 prettify_init.sh	starts the process of conversion, this is the only script you have to run manually  
 README_prettify.txt	this file
 
-Changelog
+Status
 ===
-Version 1.0
---
-Fixed issue with censored/original text pairs all being appended to footnotes.  
-Refactored some code a little.  
-Improved pattern matching used for applying ruby tags.
+Fully working with unmodded scripts. No signifiers for which character is speaking (as this is not indicated in the unmodified PC game)
 
-Version 0.9
---
-Added "Censorship level" variable to metadata.txt and finally got correct parsing and loading of external
-txt files.  
-Currently bodges loading tips files with vague filename pattern, which leads to all of the censorship text
-ending up appended to the end of the footnotes where it is not very welcome.
-
-Version 0.7
---
-Character names nicely formatted.  
-Still incomplete text (not yet handling ModCallScriptSection calls loading in external scripts)
-
-Version 0.6
---
-Include the name of the character who is speaking (when available in modded script)  
-Doesn't yet deal with "ModCallScriptSection", so incomplete text on modded game scripts
-
-Version 0.5
---
-Creates an epub of the Japanese script only.  
-Two formats of index (table of contents) are generated.  
-Hints are presented using footnotes linked at the end of their respective chapters.
+Mostly working for modded scripts. Pleasing display of character name before spoken lines. No special handling of multiple choice selection yet.

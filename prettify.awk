@@ -35,7 +35,7 @@ function get_external_text(ext_filename, ext_subname){
 			print "\n<p><br/></p>\n" > outputtxt
 			print " - break - "
 		}
-		if ($0 ~ /GADVMode.*OutputLine\>/){
+		if ($0 ~ /GADVMode.*OutputLine\>.+color=/){
 			print get_charname($0) > outputtxt
 			print get_charname($0)
 		}
@@ -93,7 +93,7 @@ BEGINFILE {
 }
 
 # Include the name of the character who is speaking (when available in modded script)
-/GADVMode.*OutputLine\>/{
+/GADVMode.*OutputLine\>.+color=/{
 	print get_charname($0) > outputtxt
 }
 
