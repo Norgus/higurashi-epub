@@ -20,12 +20,12 @@ Instructions
 - Ensure that all files from this prettify distribution are in the same directory as the game script files for the game you are converting.
 - Update the information in metadata.txt
 - run prettify_init.sh from the shell, i.e.
-- ./prettify_init.sh
+``` ./prettify_init.sh ```
 - Optionally convert the epub to kindle format (mobi) using kindlegen.exe (drag-drop works)
 
 Files
 ===
-book-template.zip	template used to create epub  
+book-template/	files that constitute the template used to create an epub  
 'KindleGen Legal Notices 2013-02-19 Windows.txt'  
 kindlegen.exe	for generating a mobi file from the epub file  
 metadata.txt	important information about book (title, filename, etc)  
@@ -36,6 +36,11 @@ README_prettify.txt	this file
 
 Changelog
 ===
+Version 1.0
+--
+Fixed issue with censored/original text pairs all being appended to footnotes.  
+Refactored some code a little.  
+Improved pattern matching used for applying ruby tags.
 
 Version 0.9
 --

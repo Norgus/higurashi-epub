@@ -11,35 +11,37 @@ function get_text(line){
 		ln = htmlsanitise(ln)
 	}
 	if (ln ~ /[（）]/){
-		ln = gensub(/([亜-熙纊-黑]{1,4})（([ぁ-ゔァ-ヺ]+)）/, "<ruby>\\1<rt>\\2</rt></ruby>", "g", ln)
+		ln = gensub(/([一-龯]+)（([一-龯]+)）/, "<ruby>\\1<rt>\\2</rt></ruby>", "g", ln)
 	}
-	printf "<p>" ln "</p>" > outputtxt
+	return "<p>" ln "</p>"
 }
 
 function get_charname(line){
 	split(line, chararr, ">|<")
 	sub("=", ":", chararr[2])
-	print "<p style=\"font-weight: bold;\"> <span style=\"" chararr[2] "; \"> &#9830; </span>" chararr[3] "</p>" > outputtxt
+	return "<p style=\"font-weight: bold;\"> <span style=\"" chararr[2] "; \"> &#9830; </span>" chararr[3] "</p>"
 }
 
 function get_external_text(ext_filename, ext_subname){
+	# read until sub is encountered
 	do {
 		morelines = getline < ext_filename
 		if ($0 ~ ext_subname){break}
 	} while (morelines)
+	# read relevant lines into output text file until beginning of next sub or end of file is encountered
 	do {
 		morelines = getline < ext_filename
 		if ($0 ~ /ClearMessage/){
 			print "\n<p><br/></p>\n" > outputtxt
-			print "line!!"
+			print " - break - "
 		}
 		if ($0 ~ /GADVMode.*OutputLine\>/){
-			get_charname($0)
-			print "character name!"
+			print get_charname($0) > outputtxt
+			print get_charname($0)
 		}
 		if ($0 ~ /OutputLine\(NULL/){
-			get_text($0)
-			print "text line!"
+			print get_text($0) > outputtxt
+			print "line: " get_text($0) 
 		}
 		if ($0 ~ /^void dialog/){break}
 	} while (morelines)
@@ -57,15 +59,21 @@ BEGIN {
 	print "<h2 class=\"oo-midashi\" id=\"toc-" tocid "\">" tocs[tocid] "</h2>\n<p><br/></p>" > maintxt 
 }
 BEGINFILE {
-	if (tolower(FILENAME) ~ /tips/){
+	if (tolower(FILENAME) ~ /^[^z].+tip.+txt$/){
+		# file is a tips file, link to tip footnote & set output variable to footnote file
 		outputtxt = tipstxt
 		print "\n<br/>\n<aside class=\"footnote\" epub:type=\"footnote\" id=\"tip" ++tipno "\">" > outputtxt
 	} else {
+		# file is normal story script, set output variable to main body text file
 		outputtxt = maintxt 
 		print "\n<br/>\n" > outputtxt
 	}
 	found = 0
 }
+
+# skip files starting z, containing 'tip', and ending txt (original/censored text files from higurashi mod)
+{if (tolower(FILENAME) ~ /^z.+tip.+txt$/) {nextfile}}
+
 /■/{
         if (! found) {
                 found = 1
@@ -86,11 +94,11 @@ BEGINFILE {
 
 # Include the name of the character who is speaking (when available in modded script)
 /GADVMode.*OutputLine\>/{
-	get_charname($0)
+	print get_charname($0) > outputtxt
 }
 
 /OutputLine\(NULL/{
-	get_text($0)
+	print get_text($0) > outputtxt
 }
 
 # potential location to insert new lines
@@ -100,7 +108,7 @@ BEGINFILE {
 
 # retrieve content loaded from external scripts in 07th-mod modded version of higurashi
 /ModCallScriptSection/ {
-	if($2 ~ /&/){next} # filter out filenames containing &.. because that's a fucking thing
+	if($2 ~ /&/){next} # filter out filenames containing "&" character
 	gtet = strtonum(substr($1, match($1, "[0-9]"), 1))
 	if (censor_level >= gtet) {
 		ext_filename = $2 ".txt"
@@ -116,15 +124,18 @@ BEGINFILE {
 	get_external_text(ext_filename, ext_subname) 
 }
 
+# place tip footnote link in main body text
 /TIPS_NEW/{
 	print "<p>Tip <a class=\"noteref\" epub:type=\"noteref\" id=\"tip_body-" ++tipno_body "\" href=\"" tipsxhtmlfile "#tip" tipno_body "\">" tipno_body "</a></p>" > outputtxt
 }
 
 ENDFILE {
-	if (tolower(FILENAME) ~ /tips/){
+	# assume tip files starting with "z" are in fact mod scripts
+	if (tolower(FILENAME) ~ /^[^z].+tip.+txt$/){ 
+		# place link back to main body text at end of tip footnote & close footnote aside tag
 		print "<a href=\"" mainxhtmlfile "#tip_body-" tipno_backref_id "\">戻る</a></aside>" > outputtxt
+		print "\n<br/>\n" > outputtxt
 	}
-	print "\n<br/>\n" > outputtxt
 }
 
 END{
