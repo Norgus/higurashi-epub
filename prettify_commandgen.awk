@@ -26,6 +26,16 @@ BEGIN {
 	print $2 ".txt" > runfile
 }
 
+# skip over bad ending files
+/\<GChoiceMode\>/{
+	do{
+		hangingOpenBrackets = 0 
+		hangingOpenBrackets += gsub("{","")
+		hangingOpenBrackets -= gsub("}","")
+		getline
+	} while (hangingOpenBrackets)
+}
+
 END {
 	print "*tips*txt" > runfile
 	ORS = "\n"
