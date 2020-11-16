@@ -4,6 +4,7 @@ function htmlsanitise(a){
 	return result
 }
 
+# takes a spoken/printed line, returns formatted and ready text
 function get_text(line){
 	split(line,linearr,"\"")
 	ln = linearr[2]
@@ -16,19 +17,24 @@ function get_text(line){
 	return "<p>" ln "</p>"
 }
 
+# takes line depicting character name in modded higurashi scripts, returns formatted name text
 function get_charname(line){
 	split(line, chararr, ">|<")
 	sub("=", ":", chararr[2])
 	return "<p style=\"font-weight: bold;\"> <span style=\"" chararr[2] "; \"> &#9830; </span>" chararr[3] "</p>"
 }
 
+# takes a filename and subroutine name & writes out the content of that sub to the output file
 function get_external_text(ext_filename, ext_subname){
-	# read until sub is encountered
+	# read until specified sub is encountered
 	do {
 		morelines = getline < ext_filename
 		if ($0 ~ ext_subname){break}
 	} while (morelines)
-	# read relevant lines into output text file until beginning of next sub or end of file is encountered
+	hangingOpenBrackets = 0 
+	hangingOpenBrackets += gsub("{","") # just in case the first bracket is opened on the sub name line
+	hangingOpenBrackets -= gsub("}","")
+	# read relevant lines into output text file until end of sub or file is encountered
 	do {
 		morelines = getline < ext_filename
 		if ($0 ~ /ClearMessage/){
@@ -44,7 +50,10 @@ function get_external_text(ext_filename, ext_subname){
 			print "line: " get_text($0) 
 		}
 		if ($0 ~ /^void dialog/){break}
-	} while (morelines)
+		hangingOpenBrackets += gsub("{","")
+		hangingOpenBrackets -= gsub("}","")
+	} while (morelines && hangingOpenBrackets)
+	close(ext_filename) # ensure file is re-opened and read from the beginning next time
 }	
 BEGIN {
 	FS = "\""
@@ -74,6 +83,7 @@ BEGINFILE {
 # skip files starting z, containing 'tip', and ending txt (original/censored text files from higurashi mod)
 {if (tolower(FILENAME) ~ /^z.+tip.+txt$/) {nextfile}}
 
+# get titles for table of contents (also format titles)
 /■/{
         if (! found) {
                 found = 1
@@ -100,11 +110,6 @@ BEGINFILE {
 /OutputLine\(NULL/{
 	print get_text($0) > outputtxt
 }
-
-# potential location to insert new lines
-#/OutputLineAll/{
-#	print "\n<br/>\n" > outputtxt
-#}
 
 # retrieve content loaded from external scripts in 07th-mod modded version of higurashi
 /ModCallScriptSection/ {
